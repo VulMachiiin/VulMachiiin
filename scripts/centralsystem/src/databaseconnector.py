@@ -59,18 +59,20 @@ class DatabaseConnector():
                                                                     FOREIGN KEY (path_id) REFERENCES paths (id)
                                                                     ON DELETE CASCADE ON UPDATE NO ACTION)''')
 
-        cursor.execute('''CREATE TABLE IF NOT EXISTS edges (node_one_id INTEGER,
+        cursor.execute('''CREATE TABLE IF NOT EXISTS edges (edge_id INTEGER PRIMARY KEY,
+                                                            node_one_id INTEGER,
                                                             node_two_id INTEGER,
                                                             weight INTEGER NOT NULL,
                                                             shelve_id INTEGER,
-                                                            PRIMARY KEY (from_path_id, to_path_id),
-                                                            FOREIGN KEY (from_path_id) REFERENCES paths (id)
+                                                            FOREIGN KEY (node_one_id) REFERENCES paths (id)
                                                             ON DELETE CASCADE ON UPDATE NO ACTION,
-                                                            FOREIGN KEY (to_path_id) REFERENCES paths (id)
+                                                            FOREIGN KEY (node_two_id) REFERENCES paths (id)
                                                             ON DELETE CASCADE ON UPDATE NO ACTION,
-                                                            CHECK (from_path_id <> to_path_id),
-                                                            CONTSTRAINT UNIQ_EDGE UNIQUE (from_path_id, to_path_id),
+                                                            CHECK (node_one_id <> node_two_id),
+                                                            CONTSTRAINT UNIQ_EDGE UNIQUE (node_one_id, node_two_id),
                                                             FOREIGN KEY (shelve_id) REFERENCES shelves (id))''')
+
+        cursor.execute('''CREATE TABLE IF NOT EXISTS directions()''')
 
         db.commit()
         print('succesfully made missing tables')
@@ -113,9 +115,10 @@ class DatabaseConnector():
         return results
 
     # elegant pairing function by matthew szudzik
-    def elegantPair(self, x, y):
+    def elegant_pair(self, x, y):
         return (x * x + x + y) if (x >= y) else (y * y + x)
 
-    def elegantUnpair(self, z):
+    def elegant_unpair(self, z):
         sqrtz = math.floor(math.sqrt(z))
-    
+        sqz = sqrtz * sqrtz
+        return (sqrtz, z - sqz - sqrtz) if ((z - sqz) >= sqrtz) else (z - sqz, sqrtz)
