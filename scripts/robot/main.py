@@ -1,9 +1,13 @@
 from machine import Pin
+from machine import Pin, time_pulse_us
+from time import sleep_us
+from ultrasonic import Ultrasonic
 import time
-laser = Pin(2, Pin.OUT)
+laser = Pin(0, Pin.OUT)
+ultrasonic = Ultrasonic()
 
 while True:
-    laser(0)
-    time.sleep(1)
-    laser(1)
-    time.sleep(1)
+    if(ultrasonic.measure() < 10):
+        laser(0)
+    else:
+        laser(1)
