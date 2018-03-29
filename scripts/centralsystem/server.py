@@ -4,7 +4,7 @@ import socket
 s = socket.socket()
 host = socket.gethostbyname(socket.gethostname())
 
-print ('Local IP address: 'host)
+print ('Local IP address: ', host)
 port = 34567
 
 s.bind((host, port))
