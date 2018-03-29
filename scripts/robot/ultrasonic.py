@@ -3,9 +3,12 @@ import time
 
 
 class Ultrasonic:
+
     trig = Pin(15, Pin.OUT)
     echo = Pin(13, Pin.IN)
+
     def __init__(self):
+
         print("Class initialised")
 
     def measure(self):
@@ -23,4 +26,4 @@ class Ultrasonic:
         cm = (t2 - t1) / 58.0
         print(cm)
         time.sleep(0.5)
-        return cm;
+        return cm

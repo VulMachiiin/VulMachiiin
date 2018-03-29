@@ -2,6 +2,7 @@
 import socket
 import json
 
+
 class Server:
 
     # Initialises server
@@ -36,10 +37,11 @@ class Server:
 
 
 serversocket = Server()
+serversocket.connect_socket()
 
-#Json Format and parsing testcode
-testJson = '{"directions" : "FRLD", "cartridgeheight" : "3"}'
+
+
+# Json Format and parsing testcode (not needed anymore due to Python not being able to send JSON objects over sockets)
+'''testJson = '{"directions" : "FRLD", "cartridgeheight" : "3"}'
 parsedJson = serversocket.to_json(testJson)
-print(parsedJson['directions'])
-
-#serversocket.connect_socket()
+print(parsedJson['directions'])'''
