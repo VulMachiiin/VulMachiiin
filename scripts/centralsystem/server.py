@@ -1,9 +1,10 @@
 #!/usr/bin/python
 import socket
-
+import json
 
 class Server:
 
+    # Initialises server
     def __init__(self):
         # Create a TCP/IP socket
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,6 +16,12 @@ class Server:
         # 5 sockets max
         self.s.listen(5)
 
+    # Parses regular String to JSON
+    def to_json(self, message):
+        parsed_json = json.loads(message)
+        return parsed_json
+
+    # Handles connection with client socket
     def connect_socket(self):
         # Wait for client to connect to server
         c, addr = self.s.accept()
@@ -30,4 +37,9 @@ class Server:
 
 serversocket = Server()
 
-serversocket.connect_socket()
+#Json Format and parsing testcode
+testJson = '{"directions" : "FRLD", "cartridgeheight" : "3"}'
+parsedJson = serversocket.to_json(testJson)
+print(parsedJson['directions'])
+
+#serversocket.connect_socket()
