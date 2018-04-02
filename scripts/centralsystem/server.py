@@ -27,7 +27,7 @@ class Server:
         # Wait for client to connect to server
         c, addr = self.s.accept()
         print('Connected ', addr)
-        c.send(b'Ground control to major Tom')
+        c.send(b'Server message')
         # Receive client message
         received = c.recv(4096)
         print(received)
