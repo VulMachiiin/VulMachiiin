@@ -21,17 +21,24 @@ class Server:
         # 5 sockets max
         self.s.listen(5)
 
-    #Creates a random key ()
-    def create_randomkey(self):
-        key = get_random_bytes(16)
-        print(key)
-
-    # encrypts the message using AES128 EAX
+    # encrypts the message using AES128
     def do_encrypt(self, message):
-        key = 'test123'
-        cipher = AES.new(key, AES.MODE_EAX)
+        # pad the message to be 16 bits long for CBC encryption to work
+        key = b'2r5u7x!A%D*G-KaP'
+        IV = b'This is an IV456'
+        cipher = AES.new(key, AES.MODE_CFB, IV)
         ciphertext = cipher.encrypt(message)
+        cipher2 = AES.new(key, AES.MODE_CFB, IV)
+        decryptedmessage = cipher2.decrypt(ciphertext)
+        decryptedmessage = decryptedmessage[:-decryptedmessage[-1]]
         return ciphertext
+
+    def do_decrypt(self, message):
+        key = b'2r5u7x!A%D*G-KaP'
+        IV = b'This is an IV456'
+        cipher = AES.new(key, AES.MODE_CFB, IV)
+        decryptedmessage = cipher.decrypt(message)
+        return decryptedmessage
 
     # Parses regular String to JSON
     def to_json(self, message):
@@ -43,8 +50,7 @@ class Server:
         # Wait for client to connect to server
         c, addr = self.s.accept()
         print('Connected ', addr)
-        testJson = '{"directions" : "FRLD", "cartridgeheight" : "3"}'
-        c.send(do_encrypt(testJson))
+        c.send(b'Server message')
         # Receive client message
         received = c.recv(4096)
         print(received)
@@ -54,7 +60,9 @@ class Server:
 
 
 serversocket = Server()
-serversocket.connect_socket()
+test = serversocket.do_encrypt(b'test')
+decryptedtext = serversocket.do_decrypt(test)
+print(decryptedtext)
 
 
 
