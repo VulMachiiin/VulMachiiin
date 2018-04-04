@@ -1,12 +1,16 @@
 #!/usr/bin/python
 import socket
 import json
+from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
 
 
 class Server:
 
     # Initialises server
     def __init__(self):
+        key = get_random_bytes(16)
+        print(key)
         # Create a TCP/IP socket
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Get local server IP
@@ -16,6 +20,18 @@ class Server:
         self.s.bind((host, port))
         # 5 sockets max
         self.s.listen(5)
+
+    #Creates a random key ()
+    def create_randomkey(self):
+        key = get_random_bytes(16)
+        print(key)
+
+    # encrypts the message using AES128 EAX
+    def do_encrypt(self, message):
+        key = 'test123'
+        cipher = AES.new(key, AES.MODE_EAX)
+        ciphertext = cipher.encrypt(message)
+        return ciphertext
 
     # Parses regular String to JSON
     def to_json(self, message):
@@ -27,7 +43,8 @@ class Server:
         # Wait for client to connect to server
         c, addr = self.s.accept()
         print('Connected ', addr)
-        c.send(b'Server message')
+        testJson = '{"directions" : "FRLD", "cartridgeheight" : "3"}'
+        c.send(do_encrypt(testJson))
         # Receive client message
         received = c.recv(4096)
         print(received)
