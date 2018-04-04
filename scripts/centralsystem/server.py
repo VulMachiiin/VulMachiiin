@@ -6,6 +6,10 @@ from Crypto.Cipher import AES
 
 class Server:
 
+    # All String-type need to be converted to byte-type
+    key = b'2r5u7x!A%D*G-KaP'
+    IV = b'This is an IV456'
+
     # Initialises server
     def __init__(self):
         # Create a TCP/IP socket
@@ -18,22 +22,15 @@ class Server:
         # 5 sockets max
         self.s.listen(5)
 
-    # encrypts the message using AES128
+    # encrypts the message using AES128 CFB
     def do_encrypt(self, message):
-        # pad the message to be 16 bits long for CBC encryption to work
-        key = b'2r5u7x!A%D*G-KaP'
-        IV = b'This is an IV456'
-        cipher = AES.new(key, AES.MODE_CFB, IV)
+        cipher = AES.new(self.key, AES.MODE_CFB, self.IV)
         ciphertext = cipher.encrypt(message)
-        cipher2 = AES.new(key, AES.MODE_CFB, IV)
-        decryptedmessage = cipher2.decrypt(ciphertext)
-        decryptedmessage = decryptedmessage[:-decryptedmessage[-1]]
         return ciphertext
 
+    # decrypts the message using AES128 CFB
     def do_decrypt(self, message):
-        key = b'2r5u7x!A%D*G-KaP'
-        IV = b'This is an IV456'
-        cipher = AES.new(key, AES.MODE_CFB, IV)
+        cipher = AES.new(self.key, AES.MODE_CFB, self.IV)
         decryptedmessage = cipher.decrypt(message)
         return decryptedmessage
 
@@ -43,11 +40,13 @@ class Server:
         return parsed_json
 
     # Handles connection with client socket
-    def connect_socket(self):
+    def create_socket(self):
         # Wait for client to connect to server
         c, addr = self.s.accept()
         print('Connected ', addr)
-        c.send(b'Server message')
+        testJson = b'{"directions" : "FRLD", "cartridgeheight" : "3"}'
+        test = serversocket.do_encrypt(testJson)
+        c.send(test)
         # Receive client message
         received = c.recv(4096)
         print(received)
@@ -57,13 +56,4 @@ class Server:
 
 
 serversocket = Server()
-test = serversocket.do_encrypt(b'test')
-decryptedtext = serversocket.do_decrypt(test)
-print(decryptedtext)
-
-
-
-# Json Format and parsing testcode (not needed anymore due to Python not being able to send JSON objects over sockets)
-'''testJson = '{"directions" : "FRLD", "cartridgeheight" : "3"}'
-parsedJson = serversocket.to_json(testJson)
-print(parsedJson['directions'])'''
+serversocket.create_socket()
