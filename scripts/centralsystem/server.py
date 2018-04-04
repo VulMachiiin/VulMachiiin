@@ -2,15 +2,12 @@
 import socket
 import json
 from Crypto.Cipher import AES
-from Crypto.Random import get_random_bytes
 
 
 class Server:
 
     # Initialises server
     def __init__(self):
-        key = get_random_bytes(16)
-        print(key)
         # Create a TCP/IP socket
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         # Get local server IP
