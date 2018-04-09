@@ -44,9 +44,12 @@ class Server:
         # Wait for client to connect to server
         c, addr = self.s.accept()
         print('Connected ', addr)
-        testJson = b'{"directions" : "FRLD", "cartridgeheight" : "3"}'
-        test = serversocket.do_encrypt(testJson)
-        c.send(test)
+        jsonstring = b'{"directions" : "FRLD", "cartridgeheight" : "3"}'
+        print('JSON formatted string: ', jsonstring)
+        # Encrypt, print and send the String
+        encryptedstring = serversocket.do_encrypt(jsonstring)
+        print('Encrypted String: ', encryptedstring)
+        c.send(encryptedstring)
         # Receive client message
         received = c.recv(4096)
         print(received)
