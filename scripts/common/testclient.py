@@ -22,4 +22,4 @@ class clientSocket:
         return decryptedmessage
 
 clientsocket = clientSocket()
-print(clientsocket.connect('192.168.178.234', 50288))
+print(clientsocket.connect('192.168.0.118', 34567))
