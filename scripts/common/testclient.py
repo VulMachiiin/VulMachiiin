@@ -1,7 +1,7 @@
 import socket
 from Crypto.Cipher import AES
 
-class clientSocket:
+class socketHandler:
 
     def __init__(self):
         print('Creating socket')
@@ -20,6 +20,3 @@ class clientSocket:
         decryptedmessage = cipher.decrypt(ciphertext)
         decryptedmessage = decryptedmessage.decode("utf-8")
         return decryptedmessage
-
-clientsocket = clientSocket()
-print(clientsocket.connect('192.168.0.118', 34567))
