@@ -13,14 +13,16 @@ class Server:
     # Initialises server
     def __init__(self):
         # Create a TCP/IP socket
-        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
         # Get local server IP
-        host = socket.gethostbyname(socket.gethostname())
+        print(socket)
+        host = ''
         port = 34567
-        print('Local IP address: ', host)
+        #print('Local IP address: ', socket.getaddrinfo(host, port)[0][4][0])
         self.s.bind((host, port))
+        self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # 5 sockets max
-        self.s.listen(5)
+        self.s.listen(1)
 
     # encrypts the message using AES128 CFB
     def do_encrypt(self, message):
@@ -44,19 +46,21 @@ class Server:
         # Wait for client to connect to server
         c, addr = self.s.accept()
         print('Connected ', addr)
-        jsonstring = b'{"directions" : "FRLD", "cartridgeheight" : "3"}'
-        print('JSON formatted string: ', jsonstring)
-        # Encrypt, print and send the String
-        encryptedstring = serversocket.do_encrypt(jsonstring)
-        print('Encrypted String: ', encryptedstring)
-        c.send(encryptedstring)
+        testJson = b'{"directions" : "FRLD", "cartridgeheight" : "3"}'
+        test = serversocket.do_encrypt(testJson)
+        c.send(test)
         # Receive client message
-        received = c.recv(4096)
-        print(received)
+        #received = c.recv(4096)
+        #print(received)
         # Close connection with client
         c.close()
         print('Closed connection with ', addr)
 
+    def close_server(self):
+        self.s.close()
+
+
 
 serversocket = Server()
 serversocket.create_socket()
+serversocket.close_server()
