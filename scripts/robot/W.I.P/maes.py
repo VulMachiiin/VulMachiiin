@@ -59,7 +59,7 @@ MODE_ECB = 1
 MODE_CBC = 2
 #MODE_CTR = 6
 
-block_size = 16
+block_size = 32
 # variable length key: 16, 24 or 32 bytes
 key_size = None
 
