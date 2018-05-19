@@ -1,6 +1,7 @@
 import usocket as socket
 import maes
 import ubinascii
+import json
 
 
 class Server_connector:
@@ -41,3 +42,14 @@ class Server_connector:
         IV = b'This is an IV456'
         decryptor = maes.new(key, maes.MODE_CBC, IV=IV)
         return self.array_tostring(decryptor.decrypt(ciphertext))
+
+    # Parses a string to JSON format
+    def parse_to_JSON(self, jsonstring):
+        # Check if the string is using a valid JSON format
+        try:
+            parsed_json = json.loads(jsonstring)
+            print("JSON succesfully parsed")
+            return parsed_json
+        except ValueError:
+            print("JSON format not correct")
+            return ""
