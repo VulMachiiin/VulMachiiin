@@ -24,13 +24,13 @@ class Server:
 
     # encrypts the message using AES128 CFB
     def do_encrypt(self, message):
-        cipher = AES.new(self.key, AES.MODE_CFB, self.IV)
+        cipher = AES.new(self.key, AES.MODE_CBC, self.IV)
         ciphertext = cipher.encrypt(message)
         return ciphertext
 
     # decrypts the message using AES128 CFB
     def do_decrypt(self, message):
-        cipher = AES.new(self.key, AES.MODE_CFB, self.IV)
+        cipher = AES.new(self.key, AES.MODE_CBC, self.IV)
         decryptedmessage = cipher.decrypt(message)
         return decryptedmessage
 

@@ -1,17 +1,21 @@
+# This file is executed on every boot (including wake-boot from deepsleep)
+#import esp
+#esp.osdebug(None)
+import gc
 import webrepl
-from sockethandler import socketHandler
-from network import WLAN
-webrepl.start()
-wlan = WLAN(mode=WLAN.STA)
-nets = wlan.scan()
-for net in nets:
-    if net.ssid == 'vulmach':
-        print('Network found!')
-        wlan.connect(net.ssid, auth=(net.sec, 'vulmachiiin'), timeout=5000)
-        while not wlan.isconnected():
-            machine.idle() # save power while waiting
-        print('WLAN connection succeeded!')
-        break
 
-clientsocket = socketHandler()
-print(clientsocket.connect('192.168.0.118', 34567))
+webrepl.start()
+gc.collect()
+
+def do_connect():
+    import network
+    sta_if = network.WLAN(network.STA_IF)
+    if not sta_if.isconnected():
+        print('connecting to network...')
+        sta_if.active(True)
+        sta_if.connect('TERHOEVE', 'J-1995-T-1998-12')
+        while not sta_if.isconnected():
+            pass
+    print('network config:', sta_if.ifconfig())
+
+do_connect()
