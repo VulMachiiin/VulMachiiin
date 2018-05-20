@@ -3,8 +3,7 @@ import maes
 import ubinascii
 import json
 
-
-class Server_connector:
+class Server_Connector:
 
     def __init__(self):
         print('Creating socket')
@@ -24,10 +23,7 @@ class Server_connector:
 
     # Converts char array to string
     def array_tostring(self, array_data):
-        _string = ""
-        for _array in array_data:
-            _string = _string + chr(_array)
-        return _string
+        return ''.join(array_data)
 
     # Encrypts message
     def do_encrypt(self, _string):
