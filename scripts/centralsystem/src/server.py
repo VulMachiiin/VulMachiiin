@@ -9,8 +9,11 @@ class Server():
     def __init__(self, port):
         self.robot_connection = None
         self.shelve_connections_dict = {}
+
         self.robot_at_shelve = False
         self.robot_ready = False
+        self.trays_to_replace = []
+
         self.db_connector = DatabaseConnector()
         self.pathfinding = PathFinding()  
 
@@ -51,3 +54,4 @@ class Server():
     def remove_shelve_connection(self, thread_id):
         del self.shelve_connections_dict[thread_id]
 
+    def trayNotFull

@@ -12,19 +12,19 @@ class RobotConnection(threading.Thread):
 
     def run(self):
         #robot related stuff
+        json_message = {'type':'ready', 'value':True}
+        self.sent(json_message)
+
         while True:
-            self.checkmessages()
+            json_message = self.receive()
+            if json_message['type'] == 'ready':
+                if json_message['value'] == True:
+                    self.        
+            elif json_message['type'] == 'arrived_at_target':
 
-    def checkmessages():
-        json_message = self.receive()
-        if json_message['type'] == 'ready':
-            if json_message['value'] == True:
-                self.        
-        elif json_message['type'] == 'arrived_at_target':
+            elif json_message['type'] == 'unload':
 
-        elif json_message['type'] == 'unload':
-
-        elif json_message['type'] == 'load':
+            elif json_message['type'] == 'load':
 
     
     def receive(self):
