@@ -1,21 +1,13 @@
 import socket               # Import socket module
 
-from threads import RobotConnection
+from threads import RobotConnection, DatabaseHook
 from pathfinding import PathFinding
 from databaseconnector import DatabaseConnector
 
 class Server():
     '''Opens the server for outside connections and keeps track of connected devices'''
     def __init__(self, port):
-        self.robot_connection = None
-        self.shelve_connections_dict = {}
-
-        self.robot_at_shelve = False
-        self.robot_ready = False
-        self.trays_to_replace = []
-
-        self.db_connector = DatabaseConnector()
-        self.pathfinding = PathFinding()  
+        self.server_processes = ServerProcesses(self)
 
         key = b'2r5u7x!A%D*G-KaP'
         iv = b'This is an IV456'
@@ -54,4 +46,20 @@ class Server():
     def remove_shelve_connection(self, thread_id):
         del self.shelve_connections_dict[thread_id]
 
-    def trayNotFull
+
+class ServerProcesses():
+
+    def __init__(self, server):
+        self.server = server
+        self.robot_connection = None
+        self.shelve_connections_dict = {}
+
+        self.robot_at_shelve = False
+        self.robot_ready = False
+        self.trays_to_replace = []
+
+        self.db_connector = DatabaseConnector()
+        self.pathfinding = PathFinding()
+        self.database_hook = DatabaseHook(self.db_connector, self)
+
+

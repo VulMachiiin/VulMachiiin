@@ -47,3 +47,13 @@ class RobotConnection(threading.Thread):
         self.cipher.encrypt(message)
         self.connection.sendall(message)
 
+class DatabaseHook(threading.Thread):
+
+    def __init__(self, db_connection, server_processes):
+        self.db_connection = db_connection
+        self.server_processes = server_processes
+
+    def run(self):
+        while True:
+            self.db_connection.get_query('SELECT product_id, shelve_id, x_coordinate, y_coordinate FROM productsinshelve WHERE amount_in_cartridge < 0')
+            
