@@ -13,7 +13,8 @@ class Server_Connector:
     def connect(self, IP_address, port):
         self.s.connect((IP_address, port))
         print('Succesfully connected to: ', IP_address)
-        self.s.send('hoi')
+        # Send a 0 to the server to let it know that you're a robot
+        self.s.send('0')
         ciphertext = self.s.recv(4096)
         print('Encrypted message: ', ciphertext)
         decryptedmessage = self.do_decrypt(ciphertext)
