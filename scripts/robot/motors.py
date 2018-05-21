@@ -22,9 +22,6 @@ class Motors:
 		self.pwmB.duty(1023)
 
 	def vooruit(self):
-		print("voor")
-		self.pwmA.duty(1023) #range 0-1023
-		self.pwmB.duty(1023)
 		#dc1
 		self.in1.value(0) 
 		self.in2.value(1)
@@ -60,7 +57,3 @@ class Motors:
 		self.in3.value(0) 
 		self.in4.value(1)	
 
-	def start(self):
-		print("fadsXVgfdsdxc")
-		self.servo = Pin(13,Pin.OUT)
-		self.servo.value(1)
