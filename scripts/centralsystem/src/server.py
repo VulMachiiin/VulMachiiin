@@ -60,6 +60,8 @@ class ServerProcesses():
 
         self.db_connector = DatabaseConnector()
         self.pathfinding = PathFinding()
-        self.database_hook = DatabaseHook(self.db_connector, self)
+        self.database_hook = DatabaseHook(self)
+        self.database_hook.run()
 
-
+    def __del__(self):
+        self.database_hook.stop()
