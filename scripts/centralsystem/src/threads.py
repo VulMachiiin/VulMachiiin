@@ -19,7 +19,7 @@ class RobotConnection(threading.Thread):
             json_message = self.receive()
             if json_message['type'] == 'ready':
                 if json_message['value'] == True:
-                    self.        
+                    self.
             elif json_message['type'] == 'arrived_at_target':
 
             elif json_message['type'] == 'unload':
