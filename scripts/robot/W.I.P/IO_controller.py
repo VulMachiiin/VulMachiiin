@@ -29,7 +29,7 @@ class IO_controller:
             pass
         t2 = time.ticks_us()
         cm = (t2 - t1) / 58.0
-        print(cm)
+        print('Distance: ', cm, " cm")
         time.sleep(0.5)
         return cm
 
@@ -44,7 +44,7 @@ class IO_controller:
     # Detect lines and nodes
     def detect_line(self):
         value = self.adc.read()
-        print(value)
+        print("Line detection: ", value)
         # If value is between somethings its a line
 
     # Control the motors to make the robot turn/move forwards
@@ -60,3 +60,4 @@ class IO_controller:
 iocontroller = IO_controller()
 while True:
     iocontroller.detect_line()
+    iocontroller.measure_distance()
