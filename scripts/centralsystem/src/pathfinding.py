@@ -4,18 +4,18 @@ import itertools
 import methods
 
 class PathFinding():
-    """Object to wrap all the different lists and methods needed to find paths"""
+    '''Object to wrap all the different lists and methods needed to find paths'''
 
     def __init__(self, databaseconnector):
         self.databaseconnector = databaseconnector 
         
-        temp_node_tuple = self.databaseconnector.get_query("SELECT id FROM nodes")
+        temp_node_tuple = self.databaseconnector.get_query('SELECT id FROM nodes')
         node_list = []
         for item in temp_node_tuple:
             node_list.append(item[0])
         self.node_tuple = tuple(node_list)
-        self.edge_tuple = self.databaseconnector.get_query("SELECT edge_id, weight FROM edges")
-        self.edgeconnections_tuple = self.databaseconnector.get_query("SELECT edge_one_id, edge_two_id, direction FROM edgeconnections")
+        self.edge_tuple = self.databaseconnector.get_query('SELECT edge_id, weight FROM edges')
+        self.edgeconnections_tuple = self.databaseconnector.get_query('SELECT edge_one_id, edge_two_id, direction FROM edgeconnections')
 
     def dijkstra(self, start_node):
         #creates empty lists for the vertives, a dict for mapping vertex to distance and a dict for mapping which node was used to reach the node

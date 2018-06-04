@@ -54,7 +54,7 @@ class DatabaseHook(threading.Thread):
         while True:
             update_processes = False
             update_order_items = False
-            tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge < 0')
+            tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge <= 0')
             #check if items in this
             if tray_values != (): #TODO check if this is the empty list representation
                 for item in tray_values:

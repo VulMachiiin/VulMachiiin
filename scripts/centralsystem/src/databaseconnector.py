@@ -3,9 +3,9 @@ import math
 import methods
 
 class DatabaseConnector():
-    """Class used for connecting with the database. Connecting without this class is heavily discouraged.
+    '''Class used for connecting with the database. Connecting without this class is heavily discouraged.
 
-       NOTE THAT THIS IS JUST FOR OUR DATABASE DONT USE ON OTHER DATABASES"""
+       NOTE THAT THIS IS JUST FOR OUR DATABASE DONT USE ON OTHER DATABASES'''
 
     def __init__(self):
         self.db = self.setup_connection()
@@ -15,7 +15,7 @@ class DatabaseConnector():
         self.db.close()
 
     def setup_connection(self):
-        return MySQLdb.connect(host="localhost",
+        return MySQLdb.connect(host='localhost',
                                user='vulmachiiin',
                                passwd='V0etInM0nd!',
                                db='vulmachiiin')
