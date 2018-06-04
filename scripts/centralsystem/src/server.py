@@ -88,7 +88,6 @@ class ServerProcesses():
         #while input_str != 'ready':
         #    input_str = input('type ready to continue')
         #self.server.robot_connection.message_queue.append() fix pathfinding first Owo
-
             
 
 server = Server(54321)

@@ -1,4 +1,5 @@
 from databaseconnector import DatabaseConnector
+import methods
 
 class CheckoutSystem():
     def __init__(self):
@@ -36,15 +37,18 @@ class CheckoutInterface():
                 product_list = self.checkoutSystem.get_product_id()
                 print("\nproducts: ")
                 for product_entry in product_list:
-                    print("   id:", product_entry[0], "name:", product_entry[1], "in stock:", product_entry[2])
+                    methods.print_padded("id: {} name: {} in stock: {}".format(product_entry[0], product_entry[1], product_entry[2]))
             elif inpsplit[0] == "cartridgeamount":
-                print(self.checkoutSystem.get_product_name(inpsplit[1]), ": ", self.checkoutSystem.get_amount_in_cartridge(inpsplit[1]), sep='')
+                print("{}: {}".format(self.checkoutSystem.get_product_name(inpsplit[1]), self.checkoutSystem.get_amount_in_cartridge(inpsplit[1])))
             elif inpsplit[0] == "incrproduct":
                 self.checkoutSystem.increment_product(inpsplit[1])
             elif inpsplit[0] == "decrproduct":
                 self.checkoutSystem.decrement_product(inpsplit[1])
             elif inp == "help":
-                print("commands: \n    productlist\n    cartridgeamount [productid]\n    incrproduct [productid]\n    decrproduct [productid]\n    help\n    exit\n")
+                commands = ['productlist', 'cartridgeamount [productid]', 'incrproduct [productid]', 'decrproduct [productid]', 'help', 'exit']
+                print('commands:')
+                for command in commands:
+                    methods.print_padded(command, leading_space=4)
             elif inp == "exit":
                 break
 
