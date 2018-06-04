@@ -1,6 +1,7 @@
 import socket               # Import socket module
 import methods
 import time
+import os
 
 from threads import RobotConnection, DatabaseHook
 from pathfinding import PathFinding
@@ -54,7 +55,7 @@ class ServerProcesses():
         self.server = server
 
         self.robot_at_shelve = False
-        self.robot_ready = False
+        self.robot_ready = True
         self.trays_to_replace = []
         self.items_to_order = []
 
@@ -64,6 +65,7 @@ class ServerProcesses():
         self.database_hook.run()
 
     def print_lists(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
         if self.items_to_order:
             message_str = 'Following items should be ordered:'
             methods.print_log(message_str)
