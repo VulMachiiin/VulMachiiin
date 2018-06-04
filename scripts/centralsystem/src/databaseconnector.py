@@ -1,5 +1,6 @@
 import MySQLdb
 import math
+import methods
 
 class DatabaseConnector():
     """Class used for connecting with the database. Connecting without this class is heavily discouraged.
@@ -29,14 +30,3 @@ class DatabaseConnector():
         cursor = self.db.cursor()
         cursor.execute(query)
         self.db.commit()
-
-    # elegant pairing function by matthew szudzik
-    def elegant_pair(self, coor_tuple):
-        coor_tuple_x = coor_tuple[0]
-        coor_tuple_y = coor_tuple[1]
-        return (coor_tuple_x * coor_tuple_x + coor_tuple_y) if (coor_tuple_x >= coor_tuple_y) else (coor_tuple_y * coor_tuple_y + coor_tuple_x)
-
-    def elegant_unpair(self, z):
-        sqrtz = math.floor(math.sqrt(z))
-        sqz = sqrtz * sqrtz
-        return (sqrtz, z - sqz - sqrtz) if ((z - sqz) >= sqrtz) else (z - sqz, sqrtz)

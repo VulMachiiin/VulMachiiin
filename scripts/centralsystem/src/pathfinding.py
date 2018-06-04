@@ -1,5 +1,7 @@
 from databaseconnector import DatabaseConnector
 import math
+import itertools
+import methods
 
 class PathFinding():
     """Object to wrap all the different lists and methods needed to find paths"""
@@ -58,7 +60,7 @@ class PathFinding():
                     distance_list[neighbour[0][1]] = alternative_route
                     previous_node_list[neighbour[0][1]] = current_vertex[0]
 
-        return (previous_node_list)
+        return previous_node_list
 
     def dijkstra_to_directions(self, target, previous_node_list):
         edge_list_vertex = []
@@ -70,18 +72,38 @@ class PathFinding():
         
         edge_list_paired = []
         for i in range(1, len(edge_list_vertex)):
-            edge_list_paired.append((self.databaseconnector.elegant_pair(edge_list_vertex[i-1]), self.databaseconnector.elegant_pair(edge_list_vertex[i])))
+            edge_list_paired.append((methods.elegant_pair(edge_list_vertex[i-1]), methods.elegant_pair(edge_list_vertex[i])))
 
         edge_list_orientated = []
         for item in edge_list_paired:
             for orientated_item in self.edgeconnections_tuple:
                 if item == (orientated_item[0], orientated_item[1]) or item == (orientated_item[1], orientated_item[0]):
-                    edge_list_orientated.append(((self.databaseconnector.elegant_unpair(item[0]), self.databaseconnector.elegant_unpair(item[1])), orientated_item[2]))
+                    edge_list_orientated.append(((methods.elegant_unpair(item[0]), methods.elegant_unpair(item[1])), orientated_item[2]))
                     break
             else:
-                edge_list_orientated.append(((self.databaseconnector.elegant_unpair(item[0]), self.databaseconnector.elegant_unpair(item[1])), 0))
+                edge_list_orientated.append(((methods.elegant_unpair(item[0]), methods.elegant_unpair(item[1])), 0))
 
         return edge_list_orientated
+
+    def shortest_way_multiple_points(self, node_list):
+        permutations = list(itertools.permutations(node_list))
+        length = 0
+        for permutation in permutations:
+            permutation.append(0)
+            direction_dicts_list = []
+            last_node = 0
+            temp_length = 0
+            for node_id in permutation:
+                curr_dict = self.dijkstra(last_node)
+                direction_dicts_list.append((node_id, curr_dict))
+                last_node = node_id
+                temp_length += curr_dict[node_id]
+            if temp_length < length:
+                shortest_permutation = direction_dicts
+
+        dir_list = []
+        for item in shortest_permutation:
+            dir_list.append(dijkstra_to_directions(item[0], item[1]))
 
 finder = PathFinding(DatabaseConnector())
 list1 = finder.dijkstra(0)

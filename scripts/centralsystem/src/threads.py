@@ -1,6 +1,7 @@
 import json
 import threading
 import time
+import methods
 
 class RobotConnection(threading.Thread):
 '''Thread that runs the connection with the robot and does actions according to the messages'''
@@ -8,7 +9,8 @@ class RobotConnection(threading.Thread):
         threading.Thread.__init__(self)
         self.connection = connection
         self.cipher = cipher        
-        self.server = server 
+        self.server = server
+        self.message_queue = [] #we shouldnt need this but incase 2 messages are entered at the same time this will cathc that 
 
     def run(self):
         #robot related stuff
@@ -22,27 +24,23 @@ class RobotConnection(threading.Thread):
                     self.server.server_processes.robot_ready = True        
             elif json_message['type'] == 'arrived_at_target':
 
-            elif json_message['type'] == 'unload':
+            for message in self.message_queue:
+                self.sent(message)
 
-            elif json_message['type'] == 'load':
 
     
     def receive(self):
         message = self.connection.rcv(4096)
         message = self.cipher.decrypt(message)
         
-        log = open('robotconnectionlog.txt', 'a')
-        log.write('{} - robot - {}'.format(time.asctime(), message.replace('\n', ' '))) #might remove the replace if using minimalistic json convertion
-        log.close()
+        methods.print_log('robot - {}'.format(message.replace('\n', ' '))) #might remove the replace if using minimalistic json convertion
 
         return json.load(message)
 
     def sent(self, message):
         json.dumps(message, separators=(',',':'))
         
-        log = open('robotconnectionlog.txt', 'a')
-        log.write('{} - server - {}'.format(time.asctime(), message.replace('\n', ' ')))
-        log.close()
+        methods.print_log('server - {}'.format(message.replace('\n', ' ')))
         
         self.cipher.encrypt(message)
         self.connection.sendall(message)
@@ -54,9 +52,22 @@ class DatabaseHook(threading.Thread):
 
     def run(self):
         while True:
-            tray_values = self.server_processes.db_connector.get_query('SELECT product_id, shelve_id, x_coordinate, y_coordinate FROM productsinshelve WHERE amount_in_cartridge < 0')
+            update_processes = False
+            tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, productsinshelve.shelve_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve WHERE amount_in_cartridge < 0 INNER JOIN products ON products.id = productsinshelve.id')
             #check if items in this
-            for item in tray_values:
-                self.server_processes.trays_to_place.append(item)
+            if tray_values != ((, ), ): #TODO check if this is the empty list representation
+                for item in tray_values:
+                    self.server_processes.trays_to_place.append(item)
+                update_processes = True
+            
+            self.server_processes.items_to_order = []
+            tray_values = self.server_processes.db_connector.get_query('SELECT id, name, amount_in_stock FROM products WHERE amount_in_stock < 20')
+            if tray_values != ((, ), ):
+                for item in tray_values:
+                    self.server_processes.items_to_order.append(item)
+                update_processes = True
+            if update_processes:    
+                self.server_processes.tray_list_updated()
+
             sleep(5) #change this delay to set update speed
                 
