@@ -26,9 +26,6 @@ class Server():
             print('bind failed. error code:' + str(msg[0]) + ' message:' + msg[1])
         print('socket bind complete')
     
-    def __del__(self):
-        self.server_socket.close()
-
     def run(self):
         self.server_socket.listen()
         print('socket now listening')
@@ -62,15 +59,12 @@ class ServerProcesses():
         self.items_to_order = []
 
         self.db_connector = DatabaseConnector()
-        self.pathfinding = PathFinding()
+        self.pathfinding = PathFinding(self.db_connector)
         self.database_hook = DatabaseHook(self)
         self.database_hook.run()
 
-    def __del__(self):
-        self.database_hook.stop()
-
     def print_lists(self):
-        if items_to_order:
+        if self.items_to_order:
             message_str = 'Following items should be ordered:'
             methods.print_log(message_str)
             print(message_str)
@@ -79,7 +73,7 @@ class ServerProcesses():
                 methods.print_log(message_str, leading_space=4)
                 methods.print_padded(message_str, leading_space=4)            
 
-        if robot_ready and trays_to_replace:
+        if self.robot_ready and self.trays_to_replace:
             message_str = 'Fill robot with:'
             methods.print_log(message_str)
             print(message_str)

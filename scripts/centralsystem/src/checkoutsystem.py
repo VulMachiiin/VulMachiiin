@@ -38,7 +38,7 @@ class CheckoutInterface():
                 for product_entry in product_list:
                     print("   id:", product_entry[0], "name:", product_entry[1], "in stock:", product_entry[2])
             elif inpsplit[0] == "cartridgeamount":
-                print(self.checkoutSystem.get_product_name(inpsplit[1]), ": ", self.checkoutSystem.get_amount_in_cartridge(inpsplit[1]), sep="")
+                print(self.checkoutSystem.get_product_name(inpsplit[1]), ": ", self.checkoutSystem.get_amount_in_cartridge(inpsplit[1]), sep='')
             elif inpsplit[0] == "incrproduct":
                 self.checkoutSystem.increment_product(inpsplit[1])
             elif inpsplit[0] == "decrproduct":

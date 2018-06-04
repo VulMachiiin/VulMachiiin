@@ -46,7 +46,7 @@ class PathFinding():
 
             neighbour_graph = []
             for item in self.edge_tuple:
-                vertices = self.databaseconnector.elegant_unpair(item[0])
+                vertices = methods.elegant_unpair(item[0])
                 if  vertices[0] == current_vertex[0] and vertices[1] in vertex_list:
                     neighbour_graph.append((vertices, item[1]))
                 if vertices[1] == current_vertex[0] and vertices[0] in vertex_list:

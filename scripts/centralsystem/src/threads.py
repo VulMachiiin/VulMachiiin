@@ -4,7 +4,7 @@ import time
 import methods
 
 class RobotConnection(threading.Thread):
-'''Thread that runs the connection with the robot and does actions according to the messages'''
+    '''Thread that runs the connection with the robot and does actions according to the messages'''
     def __init__(self, connection, cipher, server):
         threading.Thread.__init__(self)
         self.connection = connection
@@ -23,7 +23,7 @@ class RobotConnection(threading.Thread):
                 if json_message['value'] == True:
                     self.server.server_processes.robot_ready = True        
             elif json_message['type'] == 'arrived_at_target':
-
+                print('TODO implement')
             for message in self.message_queue:
                 self.sent(message)
 
@@ -53,21 +53,26 @@ class DatabaseHook(threading.Thread):
     def run(self):
         while True:
             update_processes = False
-            tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, productsinshelve.shelve_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve WHERE amount_in_cartridge < 0 INNER JOIN products ON products.id = productsinshelve.id')
+            update_order_items = False
+            tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge < 0')
             #check if items in this
-            if tray_values != ((, ), ): #TODO check if this is the empty list representation
+            if tray_values != (): #TODO check if this is the empty list representation
                 for item in tray_values:
-                    self.server_processes.trays_to_place.append(item)
-                update_processes = True
-            
-            self.server_processes.items_to_order = []
+                    if item not in self.server_processes.trays_to_place:
+                        self.server_processes.trays_to_place.append(item)
+                        update_processes = True 
             tray_values = self.server_processes.db_connector.get_query('SELECT id, name, amount_in_stock FROM products WHERE amount_in_stock < 20')
-            if tray_values != ((, ), ):
+            if tray_values != ():
                 for item in tray_values:
-                    self.server_processes.items_to_order.append(item)
-                update_processes = True
+                    print(item, self.server_processes.items_to_order)
+                    if item not in self.server_processes.items_to_order:
+                        if not update_order_items:
+                            self.server_processes.items_to_order = []
+                        self.server_processes.items_to_order.append(item)
+                        update_order_items = True
+                        update_processes = True
             if update_processes:    
                 self.server_processes.tray_list_updated()
 
-            sleep(5) #change this delay to set update speed
+            time.sleep(5) #change this delay to set update speed
                 
