@@ -75,6 +75,6 @@ class DatabaseHook(threading.Thread):
                         update_processes = True
             if update_processes:    
                 self.server_processes.tray_list_updated()
-
+            #TODO add deltatime based system to sleep thread.
             time.sleep(5) #change this delay to set update speed
                 
