@@ -1,27 +1,25 @@
-import machine
-from machine import Pin
+from machine import Pin, ADC
 import time
 
 
 #Connect Ultrasonic to 5V, line detection to 3,3V!
 class IO_controller:
 
-    # Ultrasonic sensors pins
-    trigPinPin = Pin(15, Pin.OUT)
-    echoPin = Pin(13, Pin.IN)
-    # Analog pin used for line detection sensor (PIN VP ON ESP32!)
-    adc = machine.ADC(machine.Pin(36))
-
     def __init__(self):
         print("IO controller initialised")
+        # Ultrasonic sensors pins
+        self.trigPin = Pin(15, Pin.OUT)
+        self.echoPin = Pin(13, Pin.IN)
+        # Analog pin used for line detection sensor (PIN VP ON ESP32!)
+        self.adc = ADC(Pin(36))
 
     # Measure distance using ultrasonic sensor
     def measure_distance(self):
-        self.trigPin.off()
+        self.trigPin.value(0)
         time.sleep_us(2)
-        self.trigPin.on()
+        self.trigPin.value(1)
         time.sleep_us(10)
-        self.trigPin.off()
+        self.trigPin.value(0)
         while self.echoPin.value() == 0:
             pass
         t1 = time.ticks_us()

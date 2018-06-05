@@ -56,4 +56,3 @@ class Motors:
 		#dc2
 		self.in3.value(0) 
 		self.in4.value(1)	
-
