@@ -51,30 +51,32 @@ class DatabaseHook(threading.Thread):
         self.server_processes = server_processes
 
     def run(self):
+        old_time = 0
+        new_time = time.time()
         while True:
-            update_processes = False
-            update_order_items = False
-            tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, products.id, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge <= 0')
-            #check if items in this
-            if tray_values != (): #TODO check if this is the empty list representation
-                print(tray_values)
-                for item in tray_values:
-                    if item not in self.server_processes.trays_to_replace:
-                        self.server_processes.trays_to_replace.append(item)
-                        update_processes = True
+            new_time = time.time() #time in seconds
+            if new_time - old_time >= 5:
+                old_time = new_time
+                update_processes = False
+                update_order_items = False
+                tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, products.id, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge < 1')
+                #check if items in this
+                if tray_values != (): #TODO check if this is the empty list representation
+                    print(tray_values)
+                    for item in tray_values:
+                        if item not in self.server_processes.trays_to_replace:
+                            self.server_processes.trays_to_replace.append(item)
+                            update_processes = True
 
-            tray_values = self.server_processes.db_connector.get_query('SELECT id, name, amount_in_stock FROM products WHERE amount_in_stock < 20')
-            if tray_values != ():
-                for item in tray_values:
-                    #print(item, self.server_processes.items_to_order)
-                    if item not in self.server_processes.items_to_order:
-                        if not update_order_items:
-                            self.server_processes.items_to_order = []
-                        self.server_processes.items_to_order.append(item)
-                        update_order_items = True
-                        update_processes = True
-            if update_processes:    
-                self.server_processes.tray_list_updated()
-            #TODO add deltatime based system to sleep thread.
-            time.sleep(5) #change this delay to set update speed
-                
+                tray_values = self.server_processes.db_connector.get_query('SELECT id, name, amount_in_stock FROM products WHERE amount_in_stock < 20')
+                if tray_values != ():
+                    for item in tray_values:
+                        #print(item, self.server_processes.items_to_order)
+                        if item not in self.server_processes.items_to_order:
+                            if not update_order_items:
+                                self.server_processes.items_to_order = []
+                            self.server_processes.items_to_order.append(item)
+                            update_order_items = True
+                            update_processes = True
+                if update_processes:    
+                    self.server_processes.tray_list_updated()

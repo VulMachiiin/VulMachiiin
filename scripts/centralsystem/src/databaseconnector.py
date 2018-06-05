@@ -9,6 +9,7 @@ class DatabaseConnector():
 
     def __init__(self):
         self.db = self.setup_connection()
+        self.db.autocommit(True)
         print('connected')
 
     def __del__(self):
@@ -30,3 +31,6 @@ class DatabaseConnector():
         cursor = self.db.cursor()
         cursor.execute(query)
         self.db.commit()
+
+db = DatabaseConnector()
+print(db.get_query('SELECT * FROM productsinshelve'))
