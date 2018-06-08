@@ -8,28 +8,31 @@ class RobotConnection(threading.Thread):
     def __init__(self, connection, cipher, server):
         threading.Thread.__init__(self)
         self.connection = connection
-        self.connection.
         self.cipher = cipher        
         self.server = server
         self.message_queue = [] #we shouldnt need this but incase 2 messages are entered at the same time this will cathc that 
 
     def run(self):
-        #robot related stuff
-        json_message = {'type':'ready', 'value':True}
+        #startup sequence where the server and robot do a handshake on that they are ready for comm
+        json_message = {'type':'ready_for_communication', 'value':True}
         self.sent(json_message)
+        json_message = self.receive()
+        if json_message['type'] == 'ready_for_communication' and json_message['value'] == True:
+            self.connection.settimeout(2.0)
+            while True:
+                json_message = ''
+                json_message = self.receive()
+                if json_message['type'] == 'ready':
+                    if json_message['value'] == True:
+                        self.server.server_processes.robot_ready = True        
+                elif json_message['type'] == 'arrived_at_target':
+                    print('TODO implement')
 
-        while True:
-            json_message = self.receive()
-            if json_message['type'] == 'ready':
-                if json_message['value'] == True:
-                    self.server.server_processes.robot_ready = True        
-            elif json_message['type'] == 'arrived_at_target':
-                print('TODO implement')
-
-            for message in self.message_queue:
-                self.sent(message)
-
-
+                for message in self.message_queue:
+                    self.sent(message)
+        error_message = 'robot did not send the correct message, see log for last received message'
+        methods.print_log(error_message)
+        print(error_message)
     
     def receive(self):
         message = self.connection.rcv(4096)

@@ -10,7 +10,12 @@ def print_padded(message, leading_space=0):
 	print(pad_string(message, leading_space))
 
 def pad_string(string, leading_space=0, string_end=''):
-	return '{:>{space}}'.format(string + string_end, space = leading_space + len(string))
+	return '{:>{space}}'.format(str(string) + string_end, space = leading_space + len(string))
+
+def print_list(name, array):
+    print('{}: '.format(name))
+    for item in array:
+        print_padded(item, 4)
 
 # elegant pairing function by matthew szudzik
 def elegant_pair(coor_tuple):

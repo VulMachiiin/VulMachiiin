@@ -55,7 +55,7 @@ class ServerProcesses():
         self.server = server
 
         self.robot_at_shelve = False
-        self.robot_ready = True
+        self.robot_ready = False
         self.trays_to_replace = []
         self.items_to_order = []
 
@@ -87,11 +87,11 @@ class ServerProcesses():
 
     def tray_list_updated(self):
         self.print_lists()
-        #while input_str != 'ready':
-        #    input_str = input('type ready to continue')
-        #self.server.robot_connection.message_queue.append() fix pathfinding first Owo
-
+        while input_str != 'ready':
+            input_str = input('type ready to continue')
+        self.server.robot_connection.message_queue.append({'type': 'route', 'route': self.pathfinding.robot_directions})
+        while not robot_at_shelve or not robot_ready
             
-
-server = Server(54321)
-server.run()
+if __name__ == '__main__':
+    server = Server(54321)
+    server.run()

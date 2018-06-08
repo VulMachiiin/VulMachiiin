@@ -51,5 +51,5 @@ class CheckoutInterface():
                     methods.print_padded(command, leading_space=4)
             elif inp == 'exit':
                 break
-
-checkout = CheckoutInterface(CheckoutSystem())
+if __name__ == '__main__':
+    checkout = CheckoutInterface(CheckoutSystem())
