@@ -18,7 +18,7 @@ class RobotConnection(threading.Thread):
         self.sent(json_message)
         json_message = self.receive()
         if json_message['type'] == 'ready_for_communication' and json_message['value'] == True:
-            self.connection.settimeout(2.0)
+            self.connection.settimeout(2.0) #set timeout to 2 seconds of waiting before it continues with the code
             while True:
                 json_message = ''
                 json_message = self.receive()
@@ -26,10 +26,12 @@ class RobotConnection(threading.Thread):
                     if json_message['value'] == True:
                         self.server.server_processes.robot_ready = True        
                 elif json_message['type'] == 'arrived_at_target':
-                    print('TODO implement')
+                    if json_message['value'] == 'ready':
+                        self.server.server_processes.robot_at_shelve = True
 
                 for message in self.message_queue:
                     self.sent(message)
+                    
         error_message = 'robot did not send the correct message, see log for last received message'
         methods.print_log(error_message)
         print(error_message)

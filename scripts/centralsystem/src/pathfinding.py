@@ -141,16 +141,17 @@ class PathFinding():
             if i == len(dir_list) - 1: #turn the robot around when arriving back at the starting point
                 dir_list[i].append((((0, 0), (0, 0)), 180)) 
         
-        return dir_list
+        return shortest_permutation, dir_list
 
     def robot_directions(self, node_list):
         return_list = []
-        for dir_list in self.shortest_way_multiple_points(node_list):
+        shortest_permutation, dir_list = self.shortest_way_multiple_points(node_list)
+        for dir_list in dir_list:
             temp_list = []
             for item in dir_list:
                 temp_list.append(item[1])
             return_list.append(temp_list)
-        return return_list
+        return shortest_permutation, return_list
 
 if __name__ == '__main__':
     finder = PathFinding(DatabaseConnector())
