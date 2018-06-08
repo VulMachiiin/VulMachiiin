@@ -1,25 +1,27 @@
-from machine import Pin, ADC
+import machine
+from machine import Pin
 import time
 
 
 #Connect Ultrasonic to 5V, line detection to 3,3V!
 class IO_controller:
 
+    # Ultrasonic sensors pins
+    trigPinPin = Pin(15, Pin.OUT)
+    echoPin = Pin(13, Pin.IN)
+    # Analog pin used for line detection sensor (PIN VP ON ESP32!)
+    adc = machine.ADC(machine.Pin(36))
+
     def __init__(self):
         print("IO controller initialised")
-        # Ultrasonic sensors pins
-        self.trigPin = Pin(15, Pin.OUT)
-        self.echoPin = Pin(13, Pin.IN)
-        # Analog pin used for line detection sensor (PIN VP ON ESP32!)
-        self.adc = ADC(Pin(36))
 
     # Measure distance using ultrasonic sensor
     def measure_distance(self):
-        self.trigPin.value(0)
+        self.trigPin.off()
         time.sleep_us(2)
-        self.trigPin.value(1)
+        self.trigPin.on()
         time.sleep_us(10)
-        self.trigPin.value(0)
+        self.trigPin.off()
         while self.echoPin.value() == 0:
             pass
         t1 = time.ticks_us()
@@ -27,7 +29,7 @@ class IO_controller:
             pass
         t2 = time.ticks_us()
         cm = (t2 - t1) / 58.0
-        print('Distance: ', cm, " cm")
+        print(cm)
         time.sleep(0.5)
         return cm
 
@@ -42,7 +44,7 @@ class IO_controller:
     # Detect lines and nodes
     def detect_line(self):
         value = self.adc.read()
-        print("Line detection: ", value)
+        print(value)
         # If value is between somethings its a line
 
     # Control the motors to make the robot turn/move forwards
@@ -58,4 +60,3 @@ class IO_controller:
 iocontroller = IO_controller()
 while True:
     iocontroller.detect_line()
-    iocontroller.measure_distance()
