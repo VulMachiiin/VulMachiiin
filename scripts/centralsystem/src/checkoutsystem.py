@@ -46,10 +46,10 @@ class CheckoutInterface():
                 self.checkoutSystem.decrement_product(inpsplit[1])
             elif inp == 'help':
                 commands = ['productlist', 'cartridgeamount [productid]', 'incrproduct [productid]', 'decrproduct [productid]', 'help', 'exit']
-                print('commands:')
-                for command in commands:
-                    methods.print_padded(command, leading_space=4)
+                methods.print_list('commands:', commands)
             elif inp == 'exit':
                 break
+
 if __name__ == '__main__':
     checkout = CheckoutInterface(CheckoutSystem())
+
