@@ -105,8 +105,9 @@ class PathFinding():
         for item in shortest_permutation:
             dir_list.append(dijkstra_to_directions(item[0], item[1]))
 
-'''finder = PathFinding(DatabaseConnector())
-list1 = finder.dijkstra(0)
+        return dir_list
+
+
+finder = PathFinding(DatabaseConnector())
+list1 = shortest_way_multiple_points([14, 20, 6])
 print(list1)
-list2 = finder.dijkstra_to_directions(14, list1)
-print(list2)'''

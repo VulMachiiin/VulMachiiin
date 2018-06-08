@@ -8,6 +8,7 @@ class RobotConnection(threading.Thread):
     def __init__(self, connection, cipher, server):
         threading.Thread.__init__(self)
         self.connection = connection
+        self.connection.
         self.cipher = cipher        
         self.server = server
         self.message_queue = [] #we shouldnt need this but incase 2 messages are entered at the same time this will cathc that 
@@ -24,6 +25,7 @@ class RobotConnection(threading.Thread):
                     self.server.server_processes.robot_ready = True        
             elif json_message['type'] == 'arrived_at_target':
                 print('TODO implement')
+
             for message in self.message_queue:
                 self.sent(message)
 
