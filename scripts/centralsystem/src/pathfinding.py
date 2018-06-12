@@ -155,4 +155,4 @@ class PathFinding():
 
 if __name__ == '__main__':
     finder = PathFinding(DatabaseConnector())
-    methods.print_list('path for 19, 20 and 7 is:', finder.robot_directions([19, 20, 7]))
+    methods.print_list('path for 19, 20 and 7 is', finder.robot_directions([19, 20, 7]))

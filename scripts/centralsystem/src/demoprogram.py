@@ -28,7 +28,7 @@ class DemoController:
                         inpsplit= inp.split(' ')
 
                         if inp == 'list':
-                                methods.print_list('products:', self.get_product_data())
+                                methods.print_list('products', self.get_product_data())
                         elif inpsplit[0] == 'et':
                                 self.empty_tray(inpsplit[1], inpsplit[2])
                         elif inpsplit[0] == 'ft':
@@ -37,7 +37,7 @@ class DemoController:
                                 self.decrement_product(inpsplit[1], inpsplit[2])
                         elif inp == 'help':
                                 commands = ['list (show a list of all products in shelves)', 'et [productid] [shelfid] (empty tray)', 'ft [productid] [shelfid] (fill tray)', 'cs [productid] [amount] (change amount in stock)', 'help', 'exit']
-                                methods.print_list('available commands:', commands)
+                                methods.print_list('available commands', commands)
                         elif inp == 'exit':
                                 break
 if __name__ == '__main__':
