@@ -69,7 +69,6 @@ class DatabaseHook(threading.Thread):
                 tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, products.id, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge < 1')
                 #check if items in this
                 if tray_values != (): #TODO check if this is the empty list representation
-                    print(tray_values)
                     for item in tray_values:
                         if item not in self.server_processes.trays_to_replace:
                             self.server_processes.trays_to_replace.append(item)
