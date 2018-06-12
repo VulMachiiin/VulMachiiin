@@ -29,12 +29,12 @@ class DemoController:
 
                         if inp == 'list':
                                 methods.print_list('products:', self.get_product_data())
-                        elif inpsplit[0] == 'et':
+                        elif inpsplit[0] == 'et' and len(inpsplit) == 3:
                                 self.empty_tray(inpsplit[1], inpsplit[2])
-                        elif inpsplit[0] == 'ft':
+                        elif inpsplit[0] == 'ft' and len(inpsplit) == 3:
                                 self.fill_tray(inpsplit[1], inpsplit[2])
-                        elif inpsplit[0] == 'cs':
-                                self.decrement_product(inpsplit[1], inpsplit[2])
+                        elif inpsplit[0] == 'cs' and len(inpsplit) == 3:
+                                self.change_stock(inpsplit[1], inpsplit[2])
                         elif inp == 'help':
                                 commands = ['list (show a list of all products in shelves)', 'et [productid] [shelfid] (empty tray)', 'ft [productid] [shelfid] (fill tray)', 'cs [productid] [amount] (change amount in stock)', 'help', 'exit']
                                 methods.print_list('available commands:', commands)

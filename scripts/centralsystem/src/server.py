@@ -66,7 +66,7 @@ class ServerProcesses():
         self.database_hook.run()
 
     def print_lists(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
+        #os.system('cls' if os.name == 'nt' else 'clear')
         if self.items_to_order:
             message_str = 'Following items should be ordered:'
             methods.print_log(message_str)
@@ -92,6 +92,9 @@ class ServerProcesses():
 
     def tray_list_updated(self):
         self.print_lists()
+        if self.trays_to_replace == [] or not self.robot_ready:
+            return
+        input_str = ""
         while input_str != 'ready':
             input_str = input('type ready to continue')
         self.robot_ready = False
@@ -100,6 +103,7 @@ class ServerProcesses():
         for item in self.trays_to_replace_in_process:
             if item[3] not in location_list:
                 location_list.append(item[3])
+        print('trays to replace:', self.trays_to_replace, 'trays now:', self.trays_to_replace_in_process)
         shortest_perm, dir_list = self.pathfinding.robot_directions(location_list) #get the path needed for the robot and also the order in which the shelves will get visited. This is needed for the unload message that needs to give the location
 
         trays_to_replace_in_process_copy = list(self.trays_to_replace_in_process) #copies list so that we can overwrite the current list with the items in the right order
@@ -121,7 +125,6 @@ class ServerProcesses():
                 self.server.robot_connection.message_queue.append({'type': 'unload', 'cartridge_location': cartridge_location_list})
                 self.server.robot_connection.message_queue.append({'type': 'load', 'cartridge_location': cartridge_location_list})
                 robot_at_shelve = False
-
 
             
 if __name__ == '__main__':
