@@ -16,8 +16,10 @@ class Server():
 
         key = b'2r5u7x!A%D*G-KaP'
         iv = b'This is an IV456'
+        print(key, iv)
         self.cipher = AES.new(key, AES.MODE_CBC, iv)
-        
+        print('thats alot of cipher')
+
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('socket created')
 
