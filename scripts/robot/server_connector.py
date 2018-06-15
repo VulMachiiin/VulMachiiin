@@ -8,13 +8,14 @@ class Server_Connector(threading.Thread):
 
     encryptor = Encryptor()
     iocontroller = IO_controller()
-    iocontroller
+
     def __init__(self):
         print('Creating socket')
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #TODO ip en port global
         #ciphertext = self.s.recv(4096)
         #decryptedmessage = self.do_decrypt(ciphertext))
+        # Save me from the darks\
 
     def run(self, IP_address, port):
         self.s.connect((IP_address, port))
