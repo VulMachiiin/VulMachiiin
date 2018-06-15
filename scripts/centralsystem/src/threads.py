@@ -13,21 +13,28 @@ class RobotConnection(threading.Thread):
         self.message_queue = [] #we shouldnt need this but incase 2 messages are entered at the same time this will cathc that 
 
     def run(self):
-        #robot related stuff
-        json_message = {'type':'ready', 'value':True}
+        #startup sequence where the server and robot do a handshake on that they are ready for comm
+        json_message = {'type':'ready_for_communication', 'value':True}
         self.sent(json_message)
+        json_message = self.receive()
+        if json_message['type'] == 'ready_for_communication' and json_message['value'] == True:
+            self.connection.settimeout(2.0) #set timeout to 2 seconds of waiting before it continues with the code
+            while True:
+                json_message = ''
+                json_message = self.receive()
+                if json_message['type'] == 'ready':
+                    if json_message['value'] == True:
+                        self.server.server_processes.robot_ready = True        
+                elif json_message['type'] == 'arrived_at_target':
+                    if json_message['value'] == 'ready':
+                        self.server.server_processes.robot_at_shelve = True
 
-        while True:
-            json_message = self.receive()
-            if json_message['type'] == 'ready':
-                if json_message['value'] == True:
-                    self.server.server_processes.robot_ready = True        
-            elif json_message['type'] == 'arrived_at_target':
-                print('TODO implement')
-            for message in self.message_queue:
-                self.sent(message)
-
-
+                for message in self.message_queue:
+                    self.sent(message)
+                    
+        error_message = 'robot did not send the correct message, see log for last received message'
+        methods.print_log(error_message)
+        print(error_message)
     
     def receive(self):
         message = self.connection.rcv(4096)
@@ -62,7 +69,6 @@ class DatabaseHook(threading.Thread):
                 tray_values = self.server_processes.db_connector.get_query('SELECT products.name, products.amount_in_stock, products.id, productsinshelve.shelf_id, productsinshelve.x_coordinate, productsinshelve.y_coordinate FROM productsinshelve LEFT JOIN products ON products.id = productsinshelve.product_id WHERE amount_in_cartridge < 1')
                 #check if items in this
                 if tray_values != (): #TODO check if this is the empty list representation
-                    print(tray_values)
                     for item in tray_values:
                         if item not in self.server_processes.trays_to_replace:
                             self.server_processes.trays_to_replace.append(item)
