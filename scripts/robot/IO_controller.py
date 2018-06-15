@@ -1,14 +1,21 @@
 import machine
 from machine import Pin
+import Motor
 import time
+import threading
 
 
 #Connect Ultrasonic to 5V, line detection to 3,3V!
-class IO_controller:
+class IO_controller():
 
     # Ultrasonic sensors pins
+    motor1 = Motor(1,1,1)
+    motor2 = Motor(1,1,1)
+    motor3 = Motor(1,1,1)
+    motor4 = Motor(1,1,1)
     trigPinPin = Pin(15, Pin.OUT)
     echoPin = Pin(13, Pin.IN)
+
     # Analog pin used for line detection sensor (PIN VP ON ESP32!)
     adc = machine.ADC(machine.Pin(36))
 
@@ -42,9 +49,13 @@ class IO_controller:
             return
 
     # Detect lines and nodes
-    def detect_line(self):
+    def detect_node(self):
         value = self.adc.read()
         print(value)
+        if(value == 1000):
+            return "line"
+        elif(value == 2000):
+            return "node"
         # If value is between somethings its a line
 
     # Control the motors to make the robot turn/move forwards
@@ -56,7 +67,4 @@ class IO_controller:
         elif angle == -90:
             print('left')
 
-
-iocontroller = IO_controller()
-while True:
-    iocontroller.detect_line()
+        # TODO DAARNA RECHTDOOR
