@@ -2,7 +2,6 @@ import machine
 from machine import Pin
 import Motor
 import time
-import threading
 
 
 #Connect Ultrasonic to 5V, line detection to 3,3V!
