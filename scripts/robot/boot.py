@@ -3,6 +3,7 @@ import gc
 import webrepl
 import network
 import time
+from server_connector import Server_connector
 gc.collect()
 
 def do_connect():
@@ -16,3 +17,7 @@ def do_connect():
     print('network config:', sta_if.ifconfig())
 
 do_connect()
+
+server_connector = Server_connector('80.56.122.76', '54321')
+print('Creating socket')
+server_connector.run()

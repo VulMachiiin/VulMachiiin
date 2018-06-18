@@ -1,6 +1,6 @@
 import machine
 from machine import Pin
-import Motor
+from motor import Motor
 import time
 
 
