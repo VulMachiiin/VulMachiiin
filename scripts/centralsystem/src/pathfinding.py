@@ -107,14 +107,14 @@ class PathFinding():
                 last_node = node_id
                 temp_length += distance_list[node_id]
 
-            print('length: ', length, 'temp_length: ', temp_length)
+            #print('length: ', length, 'temp_length: ', temp_length)
             if temp_length < length or shortest_permutation == 0:
                 shortest_permutation = direction_dicts_list
                 length = temp_length
 
         dir_list = []
         for item in shortest_permutation:
-            print('items:', item)
+            #print('items:', item)
             dir_list.append(self.dijkstra_to_directions(item[0], item[1]))
         
         methods.print_list('dir_list: ', dir_list)
@@ -145,7 +145,7 @@ class PathFinding():
 
     def robot_directions(self, node_list):
         return_list = []
-        print('node list:', node_list)
+        #print('node list:', node_list)
         shortest_permutation, dir_list = self.shortest_way_multiple_points(node_list)
         for dir_list in dir_list:
             temp_list = []

@@ -3,8 +3,15 @@ import math
 from Crypto.Cipher import AES
 from base64 import b64encode, b64decode
 
+from Crypto.Cipher import AES
+from base64 import b64encode, b64decode
+
 def print_log(message, leading_space=0):
-    log = open('robotconnectionlog.txt', 'a')
+    filename = 'logs/{}.txt'.format(time.strftime('%d-%m-%y'))
+    try:    
+        log = open(filename, 'a')
+    except FileNotFoundError:
+        log = open(filename, 'w')
     log.write('{} - {}'.format(time.asctime(), pad_string(message, leading_space, string_end='\n')))
     log.close()
 
@@ -35,14 +42,15 @@ def elegant_unpair(z):
 
 BLOCK_SIZE = 16  # Bytes
 pad = lambda s: s + ((BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)).encode()
-unpad = lambda s: s[:-ord(s[len(s) - 1:])]
+unpad = lambda s: s[:-ord(s[-1:])]
 key = b'2r5u7x!A%D*G-KaP'
 iv = b'This is an IV456'
-cipher = AES.new(key, AES.MODE_CBC, iv)
 
-def encrypt(self, message):
-    raw = self.pad(message.encode())
-    return b64encode(self.cipher.encrypt(raw))
+def encrypt(message):
+    raw = pad(message.encode())
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    return b64encode(cipher.encrypt(raw))
 
-def decrypt(self, message):
-    return self.unpad(self.cipher.decrypt(b64decode(message))).decode()
+def decrypt(message):
+    cipher = AES.new(key, AES.MODE_CBC, iv)
+    return unpad(cipher.decrypt(b64decode(message))).decode()
