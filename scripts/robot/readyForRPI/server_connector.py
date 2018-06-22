@@ -1,0 +1,51 @@
+import json
+from encryptor import Encryptor
+import IO_controller
+import socket
+import wiringpi
+class Server_Connector:
+
+    def __init__(self, IP_address, port):
+        print('Creating socket')
+        self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.IP_address = IP_address
+        self.port = port
+        wiringpi.wiringPiSetupGpio()
+        self.encryptor = Encryptor()
+        self.iocontroller = IO_controller()
+
+    def run(self):
+        self.s.connect((self.IP_address, self.port))
+        print('Succesfully connected to: ', self.IP_address)
+        # Send a 1 to the server to let it know that you're a robot
+        self.send('1')
+        message = self.s.receive(1024)
+        json_message = {'type': 'ready', 'value': True}
+        self.send(json_message)
+        while True:
+            message = self.receive()
+            if(message['type'] == 'route'):
+                directions = message['routes']
+                for directionlist in directions:
+                    for direction in directionlist:
+                        print('Next direction: ' + direction)
+                        while(self.iocontroller.detect_node() == "line"):
+                            pass
+                        if(self.iocontroller.detect_node() == "node"):
+                            # TODO draai naar dirction
+                            print("Node detected")
+                            # self.iocontroller.control_motors(directions)
+
+    def send(self, message):
+        jsonmessage = json.dumps(message)
+        encryptedmessage = self.encryptor.encrypt(jsonmessage)
+        self.s.send(encryptedmessage)
+
+    def receive(self):
+        receivedmessage = self.s.recv(1024)
+        receivedmessage = self.encryptor.decrypt(receivedmessage)
+        return json.loads(receivedmessage)
+
+
+server_connector = Server_Connector('80.56.122.76', 54321)
+server_connector.start()
