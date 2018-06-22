@@ -1,5 +1,7 @@
 import time
 import math
+from Crypto.Cipher import AES
+from base64 import b64encode, b64decode
 
 def print_log(message, leading_space=0):
     log = open('robotconnectionlog.txt', 'a')
