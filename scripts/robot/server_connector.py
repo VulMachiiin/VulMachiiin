@@ -1,4 +1,4 @@
-import usocket as socket
+import socket
 import json
 from encryptor import Encryptor
 from IO_controller import IO_controller

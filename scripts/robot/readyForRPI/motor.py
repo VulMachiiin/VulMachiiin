@@ -1,20 +1,18 @@
-import RPi.GPIO as GPIO            # import RPi.GPIO module
 from time import sleep             # lets us have a delay
-GPIO.setmode(GPIO.BCM)             # choose BCM or BOARD
+import wiringpi
 
 # Motor class
 class Motor:
 
     # Initialises motor class
     def __init__(self, PWMpin, togglepinA, togglepinB):
-        GPIO.setmode(GPIO.BCM)             # choose BCM or BOARD
-        GPIO.setup(24, GPIO.OUT)           # set GPIO24 as an output
+        wiringpi.pinMode(24, 1)           # set GPIO24 as an output
         self.togglepinA = togglepinA
         self.togglepinB = togglepinB
-        GPIO.setup(togglepinA, GPIO.OUT)
-        GPIO.setup(togglepinB, GPIO.OUT)
-        self.PWMpin = GPIO.setup(PWMpin, GPIO.OUT)
-        self.PWMpin.start(0)
+        wiringpi.pinMode(togglepinA, 1)
+        wiringpi.pinMode(togglepinB, 1)
+        self.PWMpin = wiringpi.pinMode(PWMpin, 1)
+        wiring.softPwmCreate(PWMpin, 0, )
         #self.PWMpin = PWM(Pin(PWMpin))
 
     # Changes frequency (2000 recommended for DC motor)

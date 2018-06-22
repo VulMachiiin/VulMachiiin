@@ -1,4 +1,4 @@
-from machine import PWM, Pin
+
 
 # Motor class
 class Motor:

@@ -1,5 +1,3 @@
-import machine
-from machine import Pin
 from motor import Motor
 import time
 

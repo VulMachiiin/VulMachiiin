@@ -1,8 +1,7 @@
-import usocket as socket
 import json
-import Encryptor
+import encryptor
 import IO_controller
-
+import socket
 
 class Server_Connector:
 

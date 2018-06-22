@@ -1,21 +1,16 @@
-import maes
-import ubinascii
+from Crypto.Cipher import AES
 
 class Encryptor:
-    # Converts char array to string
-    key = b'2r5u7x!A%D*G-KaP'
-    IV = b'This is an IV456'
-    cryptor = maes.new(key, maes.MODE_CBC, IV=IV)
+        key = b'2r5u7x!A%D*G-KaP'
+        iv = b'This is an IV456'
+        print(key, iv)
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        print('thats alot of cipher')
 
+        # Encrypts message
+        def encrypt(self, _string):
+                return self.cipher.encrypt(_string)
 
-    def array_tostring(self, array_data):
-        return ''.join(array_data)
-
-    # Encrypts message
-    def encrypt(self, _string):
-        ciphertext = self.cryptor.encrypt(str.encode(_string))
-        return ciphertext
-
-    # Decrypts message
-    def decrypt(self, ciphertext):
-        return self.array_tostring(self.cryptor.decrypt(ciphertext))
+        # Decrypts message
+        def decrypt(self, ciphertext):
+                return self.cipher.decrypt(ciphertext)
