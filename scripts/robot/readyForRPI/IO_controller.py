@@ -1,7 +1,6 @@
-import RPi.GPIO as GPIO            # import RPi.GPIO module
+from wiringpi import *
 import Motor
 import time
-GPIO.setmode(GPIO.BCM)             # choose BCM or BOARD
 
 #Connect Ultrasonic to 5V, line detection to 3,3V!
 class IO_controller():
@@ -14,25 +13,25 @@ class IO_controller():
 
     def __init__(self, trigPin, echoPin):
         print("IO controller initialised")
-        GPIO.setup(trigPin, GPIO.OUT)
-        GPIO.setup(echoPin, GPIO.OUT)
+        pinMode(trigPin, 1)
+        pinMode(echoPin, 1)
         self.trigPin = trigPin
         self.echoPin = echoPin
 
     # Measure distance using ultrasonic sensor
     def measure_distance(self):
         # set Trigger to HIGH
-        GPIO.output(self.trigPin, True)
+        digitalWrite(self.trigPin, 1)
         # set Trigger after 0.01ms to LOW
         time.sleep(0.00001)
-        GPIO.output(self.trigPin, False)
+        digitalWrite(self.trigPin, 0)
         StartTime = time.time()
         StopTime = time.time()
         # save StartTime
-        while GPIO.input(self.echoPin) == 0:
+        while digitalRead(self.echoPin) == 0:
             StartTime = time.time()
         # save time of arrival
-        while GPIO.input(self.echoPin) == 1:
+        while digitalRead(self.echoPin) == 1:
             StopTime = time.time()
         # time difference between start and arrival
         TimeElapsed = StopTime - StartTime
@@ -44,15 +43,9 @@ class IO_controller():
 
     # Detect lines and nodes
     def detect_node(self):
-        value = self.adc.read()
+        value = 0
         print(value)
         if(value == 1000):
             return "line"
         elif(value == 2000):
             return "node"
-        # If value is between somethings its a line
-
-io  = IO_controller(18,24)
-while(True):
-    io.measure_distance()
-    # Control the motors to make the robot turn/move forwards

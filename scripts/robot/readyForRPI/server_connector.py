@@ -1,18 +1,18 @@
 import json
-import encryptor
+from encryptor import Encryptor
 import IO_controller
 import socket
-
+import wiringpi
 class Server_Connector:
-
-    encryptor = Encryptor()
-    iocontroller = IO_controller()
 
     def __init__(self, IP_address, port):
         print('Creating socket')
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.IP_address = IP_address
         self.port = port
+        wiringpi.wiringPiSetupGpio()
+        self.encryptor = Encryptor()
+        self.iocontroller = IO_controller()
 
     def run(self):
         self.s.connect((self.IP_address, self.port))
