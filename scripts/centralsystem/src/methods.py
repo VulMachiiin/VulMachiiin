@@ -27,3 +27,17 @@ def elegant_unpair(z):
     sqrtz = math.floor(math.sqrt(z))
     sqz = sqrtz * sqrtz
     return (sqrtz, z - sqz - sqrtz) if ((z - sqz) >= sqrtz) else (z - sqz, sqrtz)
+
+BLOCK_SIZE = 16  # Bytes
+pad = lambda s: s + ((BLOCK_SIZE - len(s) % BLOCK_SIZE) * chr(BLOCK_SIZE - len(s) % BLOCK_SIZE)).encode()
+unpad = lambda s: s[:-ord(s[len(s) - 1:])]
+key = b'2r5u7x!A%D*G-KaP'
+iv = b'This is an IV456'
+cipher = AES.new(key, AES.MODE_CBC, iv)
+
+def encrypt(self, message):
+    raw = self.pad(message.encode())
+    return b64encode(self.cipher.encrypt(raw))
+
+def decrypt(self, message):
+    return self.unpad(self.cipher.decrypt(b64decode(message))).decode()

@@ -14,12 +14,6 @@ class Server():
         self.shelve_connections_dict = {}
         self.server_processes = ServerProcesses(self)
 
-        key = b'2r5u7x!A%D*G-KaP'
-        iv = b'This is an IV456'
-        print(key, iv)
-        self.cipher = AES.new(key, AES.MODE_CBC, iv)
-        print('thats alot of cipher')
-
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('socket created')
 
@@ -39,7 +33,7 @@ class Server():
             conn_type = int(conn.rcv(64))
             #for now only robot connects
             if conn_type == 1:
-                self.robot_connection = RobotConnection(conn, self.cipher, self)
+                self.robot_connection = RobotConnection(conn, self)
                 self.robot_connection.run()
             elif conn_type == 0:
                 print('shelf tried to connect but no handler for it yet!')

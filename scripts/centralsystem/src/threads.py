@@ -5,10 +5,9 @@ import methods
 
 class RobotConnection(threading.Thread):
     '''Thread that runs the connection with the robot and does actions according to the messages'''
-    def __init__(self, connection, cipher, server):
+    def __init__(self, connection, server):
         threading.Thread.__init__(self)
         self.connection = connection
-        self.cipher = cipher        
         self.server = server
         self.message_queue = [] #we shouldnt need this but incase 2 messages are entered at the same time this will cathc that 
 
@@ -38,7 +37,7 @@ class RobotConnection(threading.Thread):
     
     def receive(self):
         message = self.connection.rcv(4096)
-        message = self.cipher.decrypt(message)
+        message = methods.decrypt(message)
         
         methods.print_log('robot - {}'.format(message.replace('\n', ' '))) #might remove the replace if using minimalistic json convertion
 
@@ -49,7 +48,7 @@ class RobotConnection(threading.Thread):
         
         methods.print_log('server - {}'.format(message.replace('\n', ' ')))
         
-        self.cipher.encrypt(message)
+        methods.encrypt(message.encode('utf8'))
         self.connection.sendall(message)
 
 class DatabaseHook(threading.Thread):
