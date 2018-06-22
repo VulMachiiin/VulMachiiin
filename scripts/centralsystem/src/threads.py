@@ -17,7 +17,7 @@ class RobotConnection(threading.Thread):
         self.sent(json_message)
         json_message = self.receive()
         if json_message['type'] == 'ready_for_communication' and json_message['value'] == True:
-            self.connection.settimeout(2.0) #set timeout to 2 seconds of waiting before it continues with the code
+            #self.connection.settimeout(2.0) #set timeout to 2 seconds of waiting before it continues with the code
             while True:
                 json_message = ''
                 json_message = self.receive()
@@ -27,28 +27,26 @@ class RobotConnection(threading.Thread):
                 elif json_message['type'] == 'arrived_at_target':
                     if json_message['value'] == 'ready':
                         self.server.server_processes.robot_at_shelve = True
-
-                for message in self.message_queue:
-                    self.sent(message)
+                while not self.message_queue:
+                    for message in self.message_queue:
+                        self.sent(message)
                     
         error_message = 'robot did not send the correct message, see log for last received message'
         methods.print_log(error_message)
         print(error_message)
     
     def receive(self):
-        message = self.connection.rcv(4096)
+        message = self.connection.recv(4096)
         message = methods.decrypt(message)
         
-        methods.print_log('robot - {}'.format(message.replace('\n', ' '))) #might remove the replace if using minimalistic json convertion
-
-        return json.load(message)
+        methods.print_log('robot - {}'.format(message)) #might remove the replace if using minimalistic json convertion
+        return json.loads(message)
 
     def sent(self, message):
-        json.dumps(message, separators=(',',':'))
+        message = json.dumps(message, separators=(',',':'))
+        methods.print_log('server - {}'.format(message))
         
-        methods.print_log('server - {}'.format(message.replace('\n', ' ')))
-        
-        methods.encrypt(message.encode('utf8'))
+        message = methods.encrypt(message)
         self.connection.sendall(message)
 
 class DatabaseHook(threading.Thread):
@@ -58,8 +56,10 @@ class DatabaseHook(threading.Thread):
         self.server_processes = server_processes
 
     def run(self):
-        old_time = 0
+        old_time = time.time()
         new_time = time.time()
+        while not self.server_processes.robot_ready:
+            pass
         while True:
             new_time = time.time() #time in seconds
             if new_time - old_time >= 5:

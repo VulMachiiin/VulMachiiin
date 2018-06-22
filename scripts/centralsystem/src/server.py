@@ -16,26 +16,23 @@ class Server():
         self.server_processes = ServerProcesses(self)
 
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print('socket created')
 
         try:
             self.server_socket.bind(('', port))
         except socket.error as msg:
             print('bind failed. error code:' + str(msg[0]) + ' message:' + msg[1])
-        print('socket bind complete')
     
     def run(self):
         self.server_socket.listen()
-        print('socket now listening')
 
         while True:
             conn, addr = self.server_socket.accept()
             print('Connected with' + addr[0] + ': ' + str(addr[1]))
-            conn_type = int(conn.recv(64))
+            conn_type = int(conn.recv(64).decode())
             #for now only robot connects
             if conn_type == 1:
                 self.robot_connection = RobotConnection(conn, self)
-                self.robot_connection.run()
+                self.robot_connection.start()
             elif conn_type == 0:
                 print('shelf tried to connect but no handler for it yet!')
 
@@ -97,11 +94,11 @@ class ServerProcesses():
 
     def tray_list_updated(self):
         self.print_lists()
-        if self.trays_to_replace == [] or not self.robot_ready:
+        if not self.trays_to_replace_in_process or not self.robot_ready:
             return
         input_str = ""
         while input_str != 'ready':
-            input_str = input('type ready to continue')
+            input_str = input('# type ready to continue: ')
         self.robot_ready = False
 
         location_list = []
@@ -110,26 +107,15 @@ class ServerProcesses():
                 location_list.append(item[3])
         print('trays to replace:', self.trays_to_replace, 'trays now:', self.trays_to_replace_in_process)
         shortest_perm, dir_list = self.pathfinding.robot_directions(location_list) #get the path needed for the robot and also the order in which the shelves will get visited. This is needed for the unload message that needs to give the location
-
-        trays_to_replace_in_process_copy = list(self.trays_to_replace_in_process) #copies list so that we can overwrite the current list with the items in the right order
-        self.trays_to_replace_in_process = []
-        for number in shortest_perm: #go over the numbers in the shortest permutation list
-            for item in trays_to_replace_in_process_copy: # go over each shelve
-                if number == item[3]:
-                    self.trays_to_replace_in_process.append(item)
-
-        self.server.robot_connection.message_queue.append({'type': 'route', 'route': dir_list})
-        while not robot_ready:
-            if robot_at_shelve: #if robot is at a shelve, do unload sequence
+        self.server.robot_connection.message_queue.append({'type': 'route', 'routes': dir_list})
+        while not self.robot_ready:
+            if self.robot_at_shelve: #if robot is at a shelve, do unload sequence
                 #send unload/load to shelve if implemented
-                cartridge_location_list = []
-                for i in range(0, len(self.trays_to_replace_in_process)):
-                    if self.trays_to_replace_in_process[0] == self.trays_to_replace_in_process[i]:
-                        cartridge_location_list.append((self.trays_to_replace_in_process[4], self.trays_to_replace_in_process[5]))
-                        del self.trays_to_replace_in_process[i]
-                self.server.robot_connection.message_queue.append({'type': 'unload', 'cartridge_location': cartridge_location_list})
-                self.server.robot_connection.message_queue.append({'type': 'load', 'cartridge_location': cartridge_location_list})
-                robot_at_shelve = False
+                if not self.trays_to_replace_in_process:
+                    print(self.trays_to_replace_in_process[0][1], self.trays_to_replace_in_process[0][2], self.trays_to_replace_in_process[0][3])
+                    self.db_connector.execute_query('UPDATE productsinshelve SET amount_in_cartridge = {} WHERE product_id = {} AND shelf_id = {}'.format(self.trays_to_replace_in_process[0][1], self.trays_to_replace_in_process[0][2], self.trays_to_replace_in_process[0][3]))
+                    del self.trays_to_replace_in_process[0]
+                self.robot_at_shelve = False
 
             
 if __name__ == '__main__':
