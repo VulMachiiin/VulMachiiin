@@ -1,52 +1,47 @@
 import usocket as socket
-import maes
-import ubinascii
 import json
+from encryptor import Encryptor
+from IO_controller import IO_controller
 
 class Server_Connector:
 
-    def __init__(self):
+    encryptor = Encryptor()
+    iocontroller = IO_controller()
+
+    def __init__(self, IP_address, port):
         print('Creating socket')
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.IP_address = IP_address
+        self.port = port
 
-    # Connects with the server via sockets
-    def connect(self, IP_address, port):
-        self.s.connect((IP_address, port))
-        print('Succesfully connected to: ', IP_address)
-        # Send a 0 to the server to let it know that you're a robot
-        self.s.send('0')
-        ciphertext = self.s.recv(4096)
-        print('Encrypted message: ', ciphertext)
-        decryptedmessage = self.do_decrypt(ciphertext)
-        print('Decrypted message: ', decryptedmessage)
-        return decryptedmessage
+    def run(self):
+        self.s.connect((self.IP_address, self.port))
+        print('Succesfully connected to: ', self.IP_address)
+        # Send a 1 to the server to let it know that you're a robot
+        self.send('1')
+        message = self.s.receive(1024)
+        json_message = {'ready': True}
+        self.send(json_message)
+        while True:
+            message = self.receive()
+            if(message['type'] == 'route'):
+                directions = message['routes']
+                for directionlist in directions:
+                    for direction in directionlist:
+                        print('Next direction: ' + direction)
+                        while(self.iocontroller.detect_node() == "line"):
+                            pass
+                        if(self.iocontroller.detect_node() == "node"):
+                            # TODO draai naar dirction
+                            print("Node detected")
+                            #self.iocontroller.control_motors(directions)
 
-    # Converts char array to string
-    def array_tostring(self, array_data):
-        return ''.join(array_data)
+    def send(self, message):
+        jsonmessage = json.dumps(message)
+        encryptedmessage = self.encryptor.encrypt(jsonmessage)
+        self.s.send(encryptedmessage)
 
-    # Encrypts message
-    def do_encrypt(self, _string):
-        key = b'2r5u7x!A%D*G-KaP'
-        IV = b'This is an IV456'
-        cryptor = maes.new(key, maes.MODE_CBC, IV=IV)
-        ciphertext = cryptor.encrypt(str.encode(_string))
-        return ciphertext
-
-    # Decrypts message
-    def do_decrypt(self, ciphertext):
-        key = b'2r5u7x!A%D*G-KaP'
-        IV = b'This is an IV456'
-        decryptor = maes.new(key, maes.MODE_CBC, IV=IV)
-        return self.array_tostring(decryptor.decrypt(ciphertext))
-
-    # Parses a string to JSON format
-    def parse_to_JSON(self, jsonstring):
-        # Check if the string is using a valid JSON format
-        try:
-            parsed_json = json.loads(jsonstring)
-            print("JSON succesfully parsed")
-            return parsed_json
-        except ValueError:
-            print("JSON format not correct")
-            return ""
+    def receive(self):
+        receivedmessage = self.s.recv(1024)
+        receivedmessage = self.encryptor.decrypt(receivedmessage)
+        return json.loads(receivedmessage)
