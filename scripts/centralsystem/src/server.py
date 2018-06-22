@@ -3,6 +3,7 @@ import methods
 import time
 import os
 
+from Crypto.Cipher import AES
 from threads import RobotConnection, DatabaseHook
 from pathfinding import PathFinding
 from databaseconnector import DatabaseConnector
@@ -35,12 +36,12 @@ class Server():
 
         while True:
             conn, addr = self.server_socket.accept()
-            print('Connected with' + addr[0] + ':' + str(addr[1]))
-            conn_type = int(conn.rcv(64))
+            print('Connected with' + addr[0] + ': ' + str(addr[1]))
+            conn_type = int(conn.recv(64))
             #for now only robot connects
             if conn_type == 1:
                 self.robot_connection = RobotConnection(conn, self.cipher, self)
-                self.robot_connection.run()
+                self.robot_connection.start()
             elif conn_type == 0:
                 print('shelf tried to connect but no handler for it yet!')
 
@@ -65,32 +66,40 @@ class ServerProcesses():
         self.db_connector = DatabaseConnector()
         self.pathfinding = PathFinding(self.db_connector)
         self.database_hook = DatabaseHook(self)
-        self.database_hook.run()
+        print('initialised db hook')
+        self.database_hook.start()
+        print('db hook ran')
 
     def print_lists(self):
-        #os.system('cls' if os.name == 'nt' else 'clear')
+        os.system('cls' if os.name == 'nt' else 'clear')
+        header_str = '##################################################'
         if self.items_to_order:
+            print(header_str)
             message_str = 'Following items should be ordered:'
             methods.print_log(message_str)
-            print(message_str)
+            print('#{:^48}#'.format(message_str))
             for item in self.items_to_order:
                 message_str = 'order {}, {} items left'.format(item[1], item[2])
                 methods.print_log(message_str, leading_space=4)
-                methods.print_padded(message_str, leading_space=4)            
-
+                methods.print_padded(message_str, leading_space=4, border_size=50)            
+            
         if self.robot_ready and self.trays_to_replace:
+            print(header_str)
             message_str = 'Fill robot with:'
             methods.print_log(message_str)
-            print(message_str)
+            print('#{:^48}#'.format(message_str))
             for i in range(0, min(3, len(self.trays_to_replace))): # runs the loop a maximum of 3 times depending on how many shelve tray requests there are
                 self.trays_to_replace_in_process.append(self.trays_to_replace[0]) #adds a list of shelves that will be handled right now
 
                 name, amount_per_cartridge, product_id, shelve_id, x_coordinate, y_coordinate = self.trays_to_replace[0]
                 message_str = 'fill place x = {}, y = {} with {} {}'.format(x_coordinate, y_coordinate, amount_per_cartridge, name)
                 methods.print_log(message_str, leading_space=4)
-                methods.print_padded(message_str, leading_space=4)
+                methods.print_padded(message_str, leading_space=4, border_size=50)
 
                 del self.trays_to_replace[0] #deletes the first item
+        
+        if self.items_to_order or (self.robot_ready and self.trays_to_replace):
+            print(header_str)
 
     def tray_list_updated(self):
         self.print_lists()

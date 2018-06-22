@@ -55,6 +55,7 @@ class RobotConnection(threading.Thread):
 class DatabaseHook(threading.Thread):
 
     def __init__(self, server_processes):
+        threading.Thread.__init__(self)
         self.server_processes = server_processes
 
     def run(self):

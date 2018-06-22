@@ -6,8 +6,11 @@ def print_log(message, leading_space=0):
     log.write('{} - {}'.format(time.asctime(), pad_string(message, leading_space, string_end='\n')))
     log.close()
 
-def print_padded(message, leading_space=0):
-	print(pad_string(message, leading_space))
+def print_padded(message, leading_space=0, border_size=0):
+    if border_size != 0:
+        print('#{:<{size}}#'.format(pad_string(message, leading_space),  size = border_size - 2))
+    else:
+        print(pad_string(message, leading_space))
 
 def pad_string(string, leading_space=0, string_end=''):
 	return '{:>{space}}'.format(str(string) + string_end, space = leading_space + len(string))
