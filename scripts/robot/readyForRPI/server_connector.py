@@ -1,7 +1,7 @@
 import json
-#import IO_controller
+from IO_controller import IO_controller
 import socket
-#import wiringpi
+import wiringpi
 import methods
 import time
 
@@ -12,8 +12,8 @@ class Server_Connector:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.IP_address = IP_address
         self.port = port
-        '''wiringpi.wiringPiSetupGpio()
-        self.iocontroller = IO_controller()'''
+        wiringpi.wiringPiSetupGpio()
+        self.iocontroller = IO_controller(23,24)
 
     def run(self):
         self.s.connect((self.IP_address, self.port))

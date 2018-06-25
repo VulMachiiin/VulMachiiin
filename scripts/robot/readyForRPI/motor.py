@@ -4,25 +4,28 @@ from wiringpi import *
 class Motor:
 
     # Initialises motor class
-    def __init__(self, PWMpin, togglepinA, togglepinB):
-        pinMode(togglepinA, togglepinB)           # set GPIO24 as an output
+    def __init__(self, enpin, togglepinA, togglepinB):
+        wiringPiSetupGpio()
         self.togglepinA = togglepinA
         self.togglepinB = togglepinB
-        self.PWMpin = PWMpin
+        self.enpin = enpin
         pinMode(togglepinA, 1)
         pinMode(togglepinB, 1)
-        pinMode(PWMpin, 1)
-        softPwmCreate(PWMpin, 0, 255)
-    # Sets duty cycle
-    def setDuty(self, dutycycle):
-        softPwmWrite(self.PWMpin, dutycycle);
+        pinMode(enpin, 1)
+        digitalWrite(enpin, 1)
 
     # Makes the motor turn one way
     def forward(self):
-        digitalWrite(togglepinA, 1)
-        digitalWrite(togglepinB, 0)
+        print("forward")
+        digitalWrite(self.togglepinA, 1)
+        digitalWrite(self.togglepinB, 0)
 
     # Makes the motor turn the opposite way
     def reverse(self):
-        digitalWrite(togglepinA, 0)
-        digitalWrite(togglepinB, 1)
+        digitalWrite(self.togglepinA, 0)
+        digitalWrite(self.togglepinB, 1)
+   
+    def stop(self):
+        print("stop")
+        digitalWrite(self.togglepinA, 0)
+        digitalWrite(self.togglepinB, 0)
