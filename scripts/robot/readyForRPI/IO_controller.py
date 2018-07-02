@@ -63,64 +63,50 @@ class IO_controller():
             print("white")
             return "node"
 
-    def forward(self):
-        print("ga")
-        while(self.detect_node() == "line"):
-            print("ik ga")
-            self.motor1.forward()
-            self.motor2.forward()
-            self.motor3.forward()
-            self.motor4.forward()
-            time.sleep(0.1)
-            self.motor3.stop()
-            self.motor4.stop()
-            time.sleep(0.1)
-        
-        while(self.detect_node() == "ground"):
-            self.motor1.forward()
-            self.motor2.forward()
-            self.motor3.forward()
-            self.motor4.forward()
-            time.sleep(0.1)
-            self.motor1.stop()
-            self.motor2.stop()
-            time.sleep(0.1)
-        
-        while(self.detect_node() == "node"):    
-            self.stop()
-        
-    def reverse(self):
+    def forward(self, secs):
+        self.stop()        
+        self.motor1.forward()
+        self.motor2.forward()
+        self.motor3.forward()
+        self.motor4.forward()
+        time.sleep(secs)
+        self.stop()
+                       
+    def reverse(self,secs):
+        self.stop()
         self.motor1.reverse()
         self.motor2.reverse()
         self.motor3.reverse()
         self.motor4.reverse()
+        time.sleep(secs)
+        self.stop()
 
-    def left(self):
+    def right(self):
+        self.stop()
         self.motor1.reverse()
         self.motor2.reverse()
         self.motor3.forward()
         self.motor4.forward()
+        time.sleep(2)
+        self.stop()
 
-    def right(self):
+    def left(self):
+        self.stop()
         self.motor1.forward()
         self.motor2.forward()
         self.motor3.reverse()
         self.motor4.reverse()   
+        time.sleep(1.4)
+        self.stop()
 
     def stop(self):
         self.motor1.stop()
         self.motor2.stop()
         self.motor3.stop()
         self.motor4.stop()
+        time.sleep(0.5)
 
 io = IO_controller(23,24)
-while True:
-   io.forward()
-#time.sleep(2)
-io.stop()
-while True:
-    print(io.detect_node()) 
-    #print(io.measure_distance())
-    #time.sleep(2)
-
+io.forward(3.6)
+io.right()
 
